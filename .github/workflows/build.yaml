@@ -9,6 +9,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+              with:
+                fetch-tags: 'true'
 
             - name: Create Artifact Version
               id: create-artifact-version
@@ -23,8 +25,6 @@ jobs:
                     MINOR=${BASH_REMATCH[2]}
 
                     echo "Release Major - ${MAJOR}, Minor - ${MINOR}"
-
-                    git tag --list
 
                     LATEST_TAG=$(git tag --list "${MAJOR}.${MINOR}.*" --sort=-v:refname | head -n 1)
 
