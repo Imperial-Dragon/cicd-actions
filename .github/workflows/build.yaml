@@ -16,7 +16,7 @@ jobs:
                 BRANCH_NAME="${GITHUB_REF#refs/heads/}"
                 echo "Branch Name - ${BRANCH_NAME}"
 
-                if [[ "$branch_name" =~ release/v([0-9]+)\.([0-9]+) ]]; then
+                if [[ "${BRANCH_NAME}" =~ release/v([0-9]+)\.([0-9]+) ]]; then
                     MAJOR=${BASH_REMATCH[1]}
                     MINOR=${BASH_REMATCH[2]}
                     echo "Release Major - ${MAJOR}, Minor - ${MINOR}"
