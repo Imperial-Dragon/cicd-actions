@@ -30,6 +30,6 @@ jobs:
             - name: Print Stuff
               env:
                 MAJOR: ${{ steps.get-latest-release-tag.outputs.release_major }}
-                MINOR: ${{ steps.get-latest-release-tag.outputs.release_major }}
+                MINOR: ${{ steps.get-latest-release-tag.outputs.release_minor }}
               run: |
                 echo "Release - ${MAJOR}.${MINOR}"
