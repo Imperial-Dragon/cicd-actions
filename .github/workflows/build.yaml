@@ -10,27 +10,60 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Get Latest Release Tag
-              id: get-latest-release-tag
+            - name: Create Artifact Version
+              id: create-artifact-version
               env:
                 BRANCH_NAME: ${{ github.ref_name }}
               run: |
                 echo "Branch Name - ${BRANCH_NAME}"
 
                 if [[ "${BRANCH_NAME}" =~ release/v([0-9]+)\.([0-9]+) ]]; then
+
                     MAJOR=${BASH_REMATCH[1]}
                     MINOR=${BASH_REMATCH[2]}
+
                     echo "Release Major - ${MAJOR}, Minor - ${MINOR}"
-                fi
-            
-                if ! [ -z ${MAJOR} ]; then
-                    echo "release_major=${MAJOR}" >> ${GITHUB_OUTPUT}
-                    echo "release_minor=${MINOR}" >> ${GITHUB_OUTPUT}
+
+                    LATEST_TAG=$(git tag --list "${MAJOR}.${MINOR}.*" --sort=-v:refname | head -n 1)
+
+                    if [ -z "${LATEST_TAG}" ]; then
+
+                        echo "No previous tag found. Starting from ${MAJOR}.${MINOR}.0"
+                        echo "artifact_version=${MAJOR}.${MINOR}.0" >> ${GITHUB_OUTPUT}
+
+                        if [ "${MINOR}" = "0" ]; then
+
+                            LAST_MAJOR=$((${MAJOR} - 1))
+                            LAST_VERSION=$(git tag --list "${LAST_MAJOR}.*.*" --sort=-v:refname | head -n 1)
+
+                            echo "Last Artifact Tag found - ${LAST_VERSION}"
+                            echo "pevious_version=${LAST_VERSION}" >> ${GITHUB_OUTPUT} 
+                        
+                        else
+                            
+                            LAST_MINOR=$((${MINOR} - 1))
+                            LAST_VERSION=$(git tag --list "${MAJOR}.${LAST_MINOR}.*" --sort=-v:refname | head -n 1)
+                            echo "pevious_version=${LAST_VERSION}" >> ${GITHUB_OUTPUT}
+                        fi
+
+                    else
+
+                        PATCH=$(echo "$LATEST_TAG" | awk -F. '{print $3}')
+                        echo "Current Patch - ${PATCH}"
+
+                        NEW_PATCH=$((${PATCH} + 1))
+
+                        echo "Found latest tag: ${LATEST_TAG}. Incrementing patch to ${NEW_PATCH}"
+
+                        echo "artifact_version=${MAJOR}.${MINOR}.${NEW_PATCH}" >> ${GITHUB_OUTPUT}
+                        echo "pevious_version=${LATEST_TAG}" >> ${GITHUB_OUTPUT}
+                    fi
                 fi
 
             - name: Print Stuff
               env:
-                MAJOR: ${{ steps.get-latest-release-tag.outputs.release_major }}
-                MINOR: ${{ steps.get-latest-release-tag.outputs.release_minor }}
+                ARTIFACT_VERSION: ${{ steps.create-artifact-version.outputs.artifact_version }}
+                PREVIOUS_VERSION: ${{ steps.create-artifact-version.outputs.pevious_version }}
               run: |
-                echo "Release - ${MAJOR}.${MINOR}"
+                echo "Artifact Version - ${ARTIFACT_VERSION}"
+                echo "Previous Version - ${PREVIOUS_VERSION}"
