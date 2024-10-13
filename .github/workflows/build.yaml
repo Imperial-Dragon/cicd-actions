@@ -12,8 +12,9 @@ jobs:
 
             - name: Get Latest Release Tag
               id: get-latest-release-tag
+              env:
+                BRANCH_NAME: ${{ github.ref_name }}
               run: |
-                BRANCH_NAME="${GITHUB_REF#refs/heads/}"
                 echo "Branch Name - ${BRANCH_NAME}"
 
                 if [[ "${BRANCH_NAME}" =~ release/v([0-9]+)\.([0-9]+) ]]; then
