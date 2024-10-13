@@ -44,8 +44,10 @@ runs:
                     echo "pevious-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT} 
                 
                 else
-                    
+
                     LAST_MINOR=$((${MINOR} - 1))
+                    echo "Searching for latest tag of last minor v${MAJOR}.${LAST_MINOR}"
+                
                     LAST_VERSION=$(git tag --list "${MAJOR}.${LAST_MINOR}.*" --sort=-v:refname | head -n 1)
                     echo "pevious-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT}
                 fi
