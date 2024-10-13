@@ -21,7 +21,7 @@ jobs:
             - name: Print Stuff
               env:
                 ARTIFACT_VERSION: ${{ steps.create-artifact-version.outputs.artifact-version }}
-                PREVIOUS_VERSION: ${{ steps.create-artifact-version.outputs.pevious-version }}
+                PREVIOUS_VERSION: ${{ steps.create-artifact-version.outputs.previous-version }}
               run: |
                 echo "Artifact Version - ${ARTIFACT_VERSION}"
                 echo "Previous Version - ${PREVIOUS_VERSION}"

@@ -8,7 +8,7 @@ outputs:
     value: ${{ steps.create-artifact-version.outputs.artifact-version }}
   previous-version: 
     description: Semantically previous artifact version
-    value: ${{ steps.create-artifact-version.outputs.pevious-version }}
+    value: ${{ steps.create-artifact-version.outputs.previous-version }}
 
 runs:
   using: "composite"
@@ -41,7 +41,7 @@ runs:
                     LAST_VERSION=$(git tag --list "${LAST_MAJOR}.*.*" --sort=-v:refname | head -n 1)
 
                     echo "Last Artifact Tag found - ${LAST_VERSION}"
-                    echo "pevious-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT} 
+                    echo "previous-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT} 
                 
                 else
 
@@ -50,7 +50,7 @@ runs:
                 
                     LAST_VERSION=$(git tag --list "${MAJOR}.${LAST_MINOR}.*" --sort=-v:refname | head -n 1)
                     echo "Last Artifact Tag found - ${LAST_VERSION}"
-                    echo "pevious-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT}
+                    echo "previous-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT}
                 fi
 
             else
@@ -63,6 +63,6 @@ runs:
                 echo "Found latest tag: ${LATEST_TAG}. Incrementing patch to ${NEW_PATCH}"
 
                 echo "artifact-version=${MAJOR}.${MINOR}.${NEW_PATCH}" >> ${GITHUB_OUTPUT}
-                echo "pevious-version=${LATEST_TAG}" >> ${GITHUB_OUTPUT}
+                echo "previous-version=${LATEST_TAG}" >> ${GITHUB_OUTPUT}
             fi
         fi
