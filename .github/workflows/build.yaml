@@ -1,15 +1,35 @@
 name: Build
 
 on: 
-    workflow_dispatch:
+    push:
 
 jobs:
     prerequisites:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Print Hello
+            - name: Get Latest Release Tag
+              id: get-latest-release-tag
               run: |
-                echo "Hello Github Actions !"
+                BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+                echo "Branch Name - ${BRANCH_NAME}"
+                
+                if [[ "$branch_name" =~ release/v([0-9]+)\.([0-9]+) ]]; then
+                    MAJOR=${BASH_REMATCH[1]}
+                    MINOR=${BASH_REMATCH[2]}
+                    echo "Release Major - ${MAJOR}, Minor - ${MINOR}"
+                fi
+            
+                if ![ -z ${MAJOR} ]; then
+                    echo "release_major=${MAJOR}" >> ${GITHUB_OUTPUT}
+                    echo "release_minor=${MINOR}" >> ${GITHUB_OUTPUT}
+                fi
+
+            - name: Print Stuff
+              env:
+                MAJOR: ${{ steps.get-latest-release-tag.outputs.release_major }}
+                MINOR: ${{ steps.get-latest-release-tag.outputs.release_major }}
+              run: |
+                echo "Release - ${MAJOR}.${MINOR}"
