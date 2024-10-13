@@ -9,11 +9,6 @@ jobs:
     prerequisites:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 0
-
             - name: Create Artifact Version
               id: create-artifact-version
               uses: ./version-setup
