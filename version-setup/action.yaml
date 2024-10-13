@@ -13,11 +13,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        
     - name: Create Artifact Version
       id: create-artifact-version
       env:
@@ -54,6 +49,7 @@ runs:
                     echo "Searching for latest tag of last minor v${MAJOR}.${LAST_MINOR}"
                 
                     LAST_VERSION=$(git tag --list "${MAJOR}.${LAST_MINOR}.*" --sort=-v:refname | head -n 1)
+                    echo "Last Artifact Tag found - ${LAST_VERSION}"
                     echo "pevious-version=${LAST_VERSION}" >> ${GITHUB_OUTPUT}
                 fi
 
