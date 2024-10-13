@@ -24,6 +24,8 @@ jobs:
 
                     echo "Release Major - ${MAJOR}, Minor - ${MINOR}"
 
+                    git tag --list
+
                     LATEST_TAG=$(git tag --list "${MAJOR}.${MINOR}.*" --sort=-v:refname | head -n 1)
 
                     if [ -z "${LATEST_TAG}" ]; then
