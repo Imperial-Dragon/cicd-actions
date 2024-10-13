@@ -1,15 +1,27 @@
 name: Build
 
 on: 
-    workflow_dispatch:
+    push:
+        branches:
+            - release/v*
 
 jobs:
     prerequisites:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout repository
               uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
 
-            - name: Print Hello
+            - name: Create Artifact Version
+              id: create-artifact-version
+              uses: ./version-setup
+
+            - name: Print Stuff
+              env:
+                ARTIFACT_VERSION: ${{ steps.create-artifact-version.outputs.artifact-version }}
+                PREVIOUS_VERSION: ${{ steps.create-artifact-version.outputs.previous-version }}
               run: |
-                echo "Hello Github Actions !"
+                echo "Artifact Version - ${ARTIFACT_VERSION}"
+                echo "Previous Version - ${PREVIOUS_VERSION}"
